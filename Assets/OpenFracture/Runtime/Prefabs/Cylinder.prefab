@@ -30,7 +30,8 @@ Transform:
   m_GameObject: {fileID: 637253451697942150}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -8.134974, y: 4.099, z: -0.34945}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -63,7 +64,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 5d82eb612157cf846bf67968cdb100a7, type: 2}
+  - {fileID: 2100000, guid: ab65d633a3d9fb24dbd4aee2445f2869, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -121,7 +122,7 @@ MonoBehaviour:
     - Projectile
     triggerKey: 0
   fractureOptions:
-    fragmentCount: 12
+    fragmentCount: 50
     xAxis: 1
     yAxis: 1
     zAxis: 1
