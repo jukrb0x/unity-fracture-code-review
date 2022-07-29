@@ -19,6 +19,7 @@ public class CameraController : MonoBehaviour
     void Start()
     {
         startTime = Time.time;
+        Cursor.lockState = CursorLockMode.Locked;
     }
 
     void Update()
