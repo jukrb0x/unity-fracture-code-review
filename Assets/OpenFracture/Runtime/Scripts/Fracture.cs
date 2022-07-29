@@ -26,7 +26,7 @@ public class Fracture : MonoBehaviour
     [ContextMenu("Print Mesh Info")]
     public void PrintMeshInfo()
     {
-        var mesh = this.GetComponent<MeshFilter>().mesh;
+        var mesh = GetComponent<MeshFilter>().mesh;
         Debug.Log("Positions");
         
         var positions = mesh.vertices;
@@ -45,15 +45,15 @@ public class Fracture : MonoBehaviour
 
     void OnValidate()
     {
-        if (this.transform.parent != null)
+        if (transform.parent != null)
         {
             // When an object is fractured, the fragments are created as children of that object's parent.
             // Because of this, they inherit the parent transform. If the parent transform is not scaled
             // the same in all axes, the fragments will not be rendered correctly.
-            var scale = this.transform.parent.localScale;
+            var scale = transform.parent.localScale;
             if ((scale.x != scale.y) || (scale.x != scale.z) || (scale.y != scale.z))
             {
-                Debug.LogWarning($"Warning: Parent transform of fractured object must be uniformly scaled in all axes or fragments will not render correctly.", this.transform);
+                Debug.LogWarning($"Warning: Parent transform of fractured object must be uniformly scaled in all axes or fragments will not render correctly.", transform);
             }
         }
     }
@@ -76,7 +76,7 @@ public class Fracture : MonoBehaviour
                 if (collisionForce > triggerOptions.minimumCollisionForce &&
                    (!triggerOptions.filterCollisionsByTag || tagAllowed))
                 {
-                    this.ComputeFracture();
+                    ComputeFracture();
                 }
             }
         }
@@ -91,7 +91,7 @@ public class Fracture : MonoBehaviour
 
             if (!triggerOptions.filterCollisionsByTag || tagAllowed)
             {
-                this.ComputeFracture();
+                ComputeFracture();
             }
         }
     }
@@ -102,7 +102,7 @@ public class Fracture : MonoBehaviour
         {
             if (Input.GetKeyDown(triggerOptions.triggerKey))
             {
-                this.ComputeFracture();
+                ComputeFracture();
             }
         }
     }
@@ -113,21 +113,21 @@ public class Fracture : MonoBehaviour
     /// <returns></returns>
     private void ComputeFracture()
     {
-        var mesh = this.GetComponent<MeshFilter>().sharedMesh;
+        var mesh = GetComponent<MeshFilter>().sharedMesh;
 
         if (mesh != null)
         {
             // If the fragment root object has not yet been created, create it now
-            if (this.fragmentRoot == null)
+            if (fragmentRoot == null)
             {
                 // Create a game object to contain the fragments
-                this.fragmentRoot = new GameObject($"{this.name}Fragments");
-                this.fragmentRoot.transform.SetParent(this.transform.parent);
+                fragmentRoot = new GameObject($"{name}Fragments");
+                fragmentRoot.transform.SetParent(transform.parent);
 
                 // Each fragment will handle its own scale
-                this.fragmentRoot.transform.position = this.transform.position;
-                this.fragmentRoot.transform.rotation = this.transform.rotation;
-                this.fragmentRoot.transform.localScale = Vector3.one;
+                fragmentRoot.transform.position = transform.position;
+                fragmentRoot.transform.rotation = transform.rotation;
+                fragmentRoot.transform.localScale = Vector3.one;
             }
             
             var fragmentTemplate = CreateFragmentTemplate();
@@ -135,21 +135,21 @@ public class Fracture : MonoBehaviour
             if (fractureOptions.asynchronous)
             {
                 StartCoroutine(Fragmenter.FractureAsync(
-                    this.gameObject,
-                    this.fractureOptions,
+                    gameObject,
+                    fractureOptions,
                     fragmentTemplate,
-                    this.fragmentRoot.transform,
+                    fragmentRoot.transform,
                     () => 
                     {
                         // Done with template, destroy it
                         GameObject.Destroy(fragmentTemplate);
 
                         // Deactivate the original object
-                        this.gameObject.SetActive(false);
+                        gameObject.SetActive(false);
 
                         // Fire the completion callback
-                        if ((this.currentRefractureCount == 0) ||
-                            (this.currentRefractureCount > 0 && this.refractureOptions.invokeCallbacks))
+                        if ((currentRefractureCount == 0) ||
+                            (currentRefractureCount > 0 && refractureOptions.invokeCallbacks))
                         {
                             if (callbackOptions.onCompleted != null)
                             {
@@ -161,20 +161,20 @@ public class Fracture : MonoBehaviour
             }
             else
             {
-                Fragmenter.Fracture(this.gameObject,
-                                    this.fractureOptions,
+                Fragmenter.Fracture(gameObject,
+                                    fractureOptions,
                                     fragmentTemplate,
-                                    this.fragmentRoot.transform);
+                                    fragmentRoot.transform);
                         
                 // Done with template, destroy it
                 GameObject.Destroy(fragmentTemplate);
 
                 // Deactivate the original object
-                this.gameObject.SetActive(false);
+                gameObject.SetActive(false);
 
                 // Fire the completion callback
-                if ((this.currentRefractureCount == 0) ||
-                    (this.currentRefractureCount > 0 && this.refractureOptions.invokeCallbacks))
+                if ((currentRefractureCount == 0) ||
+                    (currentRefractureCount > 0 && refractureOptions.invokeCallbacks))
                 {
                     if (callbackOptions.onCompleted != null)
                     {
@@ -196,7 +196,7 @@ public class Fracture : MonoBehaviour
         // Otherwise, parent to this object's parent
         GameObject obj = new GameObject();
         obj.name = "Fragment";
-        obj.tag = this.tag;
+        obj.tag = tag;
 
         // Update mesh to the new sliced mesh
         obj.AddComponent<MeshFilter>();
@@ -204,19 +204,19 @@ public class Fracture : MonoBehaviour
         // Add materials. Normal material goes in slot 1, cut material in slot 2
         var meshRenderer = obj.AddComponent<MeshRenderer>();
         meshRenderer.sharedMaterials = new Material[2] {
-            this.GetComponent<MeshRenderer>().sharedMaterial,
-            this.fractureOptions.insideMaterial
+            GetComponent<MeshRenderer>().sharedMaterial,
+            fractureOptions.insideMaterial
         };
 
         // Copy collider properties to fragment
-        var thisCollider = this.GetComponent<Collider>();
+        var thisCollider = GetComponent<Collider>();
         var fragmentCollider = obj.AddComponent<MeshCollider>();
         fragmentCollider.convex = true;
         fragmentCollider.sharedMaterial = thisCollider.sharedMaterial;
         fragmentCollider.isTrigger = thisCollider.isTrigger;
         
         // Copy rigid body properties to fragment
-        var thisRigidBody = this.GetComponent<Rigidbody>();
+        var thisRigidBody = GetComponent<Rigidbody>();
         var fragmentRigidBody = obj.AddComponent<Rigidbody>();
         fragmentRigidBody.velocity = thisRigidBody.velocity;
         fragmentRigidBody.angularVelocity = thisRigidBody.angularVelocity;
@@ -226,7 +226,7 @@ public class Fracture : MonoBehaviour
     
         // If refracturing is enabled, create a copy of this component and add it to the template fragment object
         if (refractureOptions.enableRefracturing &&
-           (this.currentRefractureCount < refractureOptions.maxRefractureCount))
+           (currentRefractureCount < refractureOptions.maxRefractureCount))
         {
             CopyFractureComponent(obj);
         }
@@ -242,11 +242,11 @@ public class Fracture : MonoBehaviour
     {
         var fractureComponent = obj.AddComponent<Fracture>();
 
-        fractureComponent.triggerOptions = this.triggerOptions;
-        fractureComponent.fractureOptions = this.fractureOptions;
-        fractureComponent.refractureOptions = this.refractureOptions;
-        fractureComponent.callbackOptions = this.callbackOptions;
-        fractureComponent.currentRefractureCount = this.currentRefractureCount + 1;
-        fractureComponent.fragmentRoot = this.fragmentRoot;
+        fractureComponent.triggerOptions = triggerOptions;
+        fractureComponent.fractureOptions = fractureOptions;
+        fractureComponent.refractureOptions = refractureOptions;
+        fractureComponent.callbackOptions = callbackOptions;
+        fractureComponent.currentRefractureCount = currentRefractureCount + 1;
+        fractureComponent.fragmentRoot = fragmentRoot;
     }
 }
