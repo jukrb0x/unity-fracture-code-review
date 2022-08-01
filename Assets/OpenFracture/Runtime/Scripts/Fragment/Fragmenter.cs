@@ -30,7 +30,7 @@ public static class Fragmenter
     {
         // Define our source mesh data for the fracturing
         FragmentData sourceMesh = new FragmentData(sourceObject.GetComponent<MeshFilter>().sharedMesh);
- 
+
         // We begin by fragmenting the source mesh, then process each fragment in a FIFO queue
         // until we achieve the target fragment count.
         var fragments = new Queue<FragmentData>();
@@ -51,28 +51,28 @@ public static class Fragmenter
 
             // Slice and dice!
             MeshSlicer.Slice(meshData,
-                             normal,
-                             meshData.Bounds.center,
-                             options.textureScale,
-                             options.textureOffset,
-                             out topSlice,
-                             out bottomSlice);
+                normal,
+                meshData.Bounds.center,
+                options.textureScale,
+                options.textureOffset,
+                out topSlice,
+                out bottomSlice);
 
             fragments.Enqueue(topSlice);
             fragments.Enqueue(bottomSlice);
         }
 
         int i = 0;
-        foreach(FragmentData meshData in fragments)
+        foreach (FragmentData meshData in fragments)
         {
-            CreateFragment(meshData, 
-                           sourceObject,
-                           fragmentTemplate, 
-                           parent,
-                           saveToDisk,
-                           saveFolderPath,
-                           options.detectFloatingFragments,
-                           ref i);
+            CreateFragment(meshData,
+                sourceObject,
+                fragmentTemplate,
+                parent,
+                saveToDisk,
+                saveFolderPath,
+                options.detectFloatingFragments,
+                ref i);
         }
     }
 
@@ -93,7 +93,7 @@ public static class Fragmenter
     {
         // Define our source mesh data for the fracturing
         FragmentData sourceMesh = new FragmentData(sourceObject.GetComponent<MeshFilter>().sharedMesh);
- 
+
         // We begin by fragmenting the source mesh, then process each fragment in a FIFO queue
         // until we achieve the target fragment count.
         var fragments = new Queue<FragmentData>();
@@ -114,12 +114,12 @@ public static class Fragmenter
 
             // Slice and dice!
             MeshSlicer.Slice(meshData,
-                             normal,
-                             meshData.Bounds.center,
-                             options.textureScale,
-                             options.textureOffset,
-                             out topSlice,
-                             out bottomSlice);
+                normal,
+                meshData.Bounds.center,
+                options.textureScale,
+                options.textureOffset,
+                out topSlice,
+                out bottomSlice);
 
             // Perform next slice on the next frame
             yield return null;
@@ -129,16 +129,16 @@ public static class Fragmenter
         }
 
         int i = 0;
-        foreach(FragmentData meshData in fragments)
+        foreach (FragmentData meshData in fragments)
         {
-            CreateFragment(meshData, 
-                           sourceObject,
-                           fragmentTemplate, 
-                           parent,
-                           false,
-                           "",
-                           options.detectFloatingFragments,
-                           ref i);
+            CreateFragment(meshData,
+                sourceObject,
+                fragmentTemplate,
+                parent,
+                false,
+                "",
+                options.detectFloatingFragments,
+                ref i);
         }
 
         onCompletion?.Invoke();
@@ -169,31 +169,31 @@ public static class Fragmenter
 
         // Slice and dice!
         MeshSlicer.Slice(sourceMesh,
-                         sliceNormal,
-                         sliceOrigin,
-                         options.textureScale,
-                         options.textureOffset,
-                         out topSlice,
-                         out bottomSlice);
+            sliceNormal,
+            sliceOrigin,
+            options.textureScale,
+            options.textureOffset,
+            out topSlice,
+            out bottomSlice);
 
         int i = 0;
         CreateFragment(topSlice,
-                       sourceObject,
-                       fragmentTemplate,
-                       parent,
-                       false,
-                       "",
-                       options.detectFloatingFragments,
-                       ref i);
+            sourceObject,
+            fragmentTemplate,
+            parent,
+            false,
+            "",
+            options.detectFloatingFragments,
+            ref i);
 
         CreateFragment(bottomSlice,
-                       sourceObject,
-                       fragmentTemplate,
-                       parent,
-                       false,
-                       "",
-                       options.detectFloatingFragments,
-                       ref i);
+            sourceObject,
+            fragmentTemplate,
+            parent,
+            false,
+            "",
+            options.detectFloatingFragments,
+            ref i);
     }
 
     /// <summary>
@@ -214,10 +214,8 @@ public static class Fragmenter
                                        ref int i)
     {
         // If there is no mesh data, don't create an object
-        if (fragmentMeshData.Triangles.Length == 0)
-        {
-            return;
-        }
+        if (fragmentMeshData.Triangles.Length == 0) return;
+
 
         Mesh[] meshes;
         Mesh fragmentMesh = fragmentMeshData.ToMesh();
@@ -227,6 +225,13 @@ public static class Fragmenter
         // separate physical object
         if (detectFloatingFragments)
         {
+            // +------+
+            // |      |
+            // |      +------+
+            // |      |      |    floating mesh
+            // |      +------+
+            // |      |
+            // +------+
             meshes = MeshUtils.FindDisconnectedMeshes(fragmentMesh);
         }
         else
@@ -237,7 +242,7 @@ public static class Fragmenter
         var parentSize = sourceObject.GetComponent<MeshFilter>().sharedMesh.bounds.size;
         var parentMass = sourceObject.GetComponent<Rigidbody>().mass;
 
-        for(int k = 0; k < meshes.Length; k++)
+        for (int k = 0; k < meshes.Length; k++)
         {
             GameObject fragment = GameObject.Instantiate(fragmentTemplate, parent);
             fragment.name = $"Fragment{i}";
@@ -265,15 +270,15 @@ public static class Fragmenter
             var size = fragmentMesh.bounds.size;
             float density = (parentSize.x * parentSize.y * parentSize.z) / parentMass;
             rigidBody.mass = (size.x * size.y * size.z) / density;
-            
+
             // This code only compiles for the editor
-            #if UNITY_EDITOR
+#if UNITY_EDITOR
             if (saveToDisk)
             {
                 string path = $"{saveFolderPath}/{meshes[k].name}.asset";
                 AssetDatabase.CreateAsset(meshes[k], path);
             }
-            #endif
+#endif
 
             i++;
         }

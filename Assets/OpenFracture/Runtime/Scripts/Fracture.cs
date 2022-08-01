@@ -7,10 +7,10 @@ using UnityEngine.Events;
 [RequireComponent(typeof(Rigidbody))]
 public class Fracture : MonoBehaviour
 {
-    public TriggerOptions triggerOptions;
-    public FractureOptions fractureOptions;
+    public TriggerOptions    triggerOptions;
+    public FractureOptions   fractureOptions;
     public RefractureOptions refractureOptions;
-    public CallbackOptions callbackOptions;
+    public CallbackOptions   callbackOptions;
 
     /// <summary>
     /// The number of times this fragment has been re-fractured.
@@ -28,7 +28,7 @@ public class Fracture : MonoBehaviour
     {
         var mesh = GetComponent<MeshFilter>().mesh;
         Debug.Log("Positions");
-        
+
         var positions = mesh.vertices;
         var normals = mesh.normals;
         var uvs = mesh.uv;
@@ -66,6 +66,7 @@ public class Fracture : MonoBehaviour
             {
                 // Collision force must exceed the minimum force (F = I / T)
                 var contact = collision.contacts[0];
+                // dI = F * dt
                 float collisionForce = collision.impulse.magnitude / Time.fixedDeltaTime;
 
                 // Colliding object tag must be in the set of allowed collision tags if filtering by tag is enabled
@@ -74,7 +75,7 @@ public class Fracture : MonoBehaviour
                 // Object is unfrozen if the colliding object has the correct tag (if tag filtering is enabled)
                 // and the collision force exceeds the minimum collision force.
                 if (collisionForce > triggerOptions.minimumCollisionForce &&
-                   (!triggerOptions.filterCollisionsByTag || tagAllowed))
+                    (!triggerOptions.filterCollisionsByTag || tagAllowed))
                 {
                     ComputeFracture();
                 }
@@ -111,7 +112,7 @@ public class Fracture : MonoBehaviour
     /// Compute the fracture and create the fragments
     /// </summary>
     /// <returns></returns>
-    private void ComputeFracture()
+    private void ComputeFracture() // start fracture once condition is satisfied
     {
         var mesh = GetComponent<MeshFilter>().sharedMesh;
 
@@ -129,7 +130,7 @@ public class Fracture : MonoBehaviour
                 fragmentRoot.transform.rotation = transform.rotation;
                 fragmentRoot.transform.localScale = Vector3.one;
             }
-            
+
             var fragmentTemplate = CreateFragmentTemplate();
 
             if (fractureOptions.asynchronous)
@@ -139,7 +140,7 @@ public class Fracture : MonoBehaviour
                     fractureOptions,
                     fragmentTemplate,
                     fragmentRoot.transform,
-                    () => 
+                    () =>
                     {
                         // Done with template, destroy it
                         GameObject.Destroy(fragmentTemplate);
@@ -157,15 +158,15 @@ public class Fracture : MonoBehaviour
                             }
                         }
                     }
-                ));
+                    ));
             }
             else
             {
                 Fragmenter.Fracture(gameObject,
-                                    fractureOptions,
-                                    fragmentTemplate,
-                                    fragmentRoot.transform);
-                        
+                    fractureOptions,
+                    fragmentTemplate,
+                    fragmentRoot.transform);
+
                 // Done with template, destroy it
                 GameObject.Destroy(fragmentTemplate);
 
@@ -184,7 +185,7 @@ public class Fracture : MonoBehaviour
             }
         }
     }
-    
+
     /// <summary>
     /// Creates a template object which each fragment will derive from
     /// </summary>
@@ -203,7 +204,8 @@ public class Fracture : MonoBehaviour
 
         // Add materials. Normal material goes in slot 1, cut material in slot 2
         var meshRenderer = obj.AddComponent<MeshRenderer>();
-        meshRenderer.sharedMaterials = new Material[2] {
+        meshRenderer.sharedMaterials = new Material[2]
+        {
             GetComponent<MeshRenderer>().sharedMaterial,
             fractureOptions.insideMaterial
         };
@@ -214,7 +216,7 @@ public class Fracture : MonoBehaviour
         fragmentCollider.convex = true;
         fragmentCollider.sharedMaterial = thisCollider.sharedMaterial;
         fragmentCollider.isTrigger = thisCollider.isTrigger;
-        
+
         // Copy rigid body properties to fragment
         var thisRigidBody = GetComponent<Rigidbody>();
         var fragmentRigidBody = obj.AddComponent<Rigidbody>();
@@ -223,10 +225,10 @@ public class Fracture : MonoBehaviour
         fragmentRigidBody.drag = thisRigidBody.drag;
         fragmentRigidBody.angularDrag = thisRigidBody.angularDrag;
         fragmentRigidBody.useGravity = thisRigidBody.useGravity;
-    
+
         // If refracturing is enabled, create a copy of this component and add it to the template fragment object
         if (refractureOptions.enableRefracturing &&
-           (currentRefractureCount < refractureOptions.maxRefractureCount))
+            (currentRefractureCount < refractureOptions.maxRefractureCount))
         {
             CopyFractureComponent(obj);
         }
