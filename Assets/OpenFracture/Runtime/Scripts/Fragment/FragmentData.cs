@@ -26,7 +26,7 @@ public class FragmentData
     /// <summary>
     /// Index buffer for each submesh
     /// </summary>
-    public List<int>[] Triangles;
+    public List<int>[] Triangles; // = Primitives
 
     /// <summary>
     /// List of edges constraints for the cut-face triangulation
@@ -52,9 +52,9 @@ public class FragmentData
         get
         {
             int count = 0;
-            for (int i = 0; i < this.Triangles.Length; i++)
+            foreach (List<int> tri in this.Triangles)
             {
-                count += this.Triangles[i].Count;
+                count += tri.Count;
             }
             return count;
         }

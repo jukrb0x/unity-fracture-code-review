@@ -28,6 +28,8 @@ public static class MeshSlicer
         bottomSlice = new FragmentData(meshData.vertexCount, meshData.triangleCount);
 
         // Keep track of what side of the cutting plane each vertex is on
+        // side True: above the plane
+        // side False: below the plane
         bool[] side = new bool[meshData.vertexCount];
 
         // Go through and identify which vertices are above/below the split plane

@@ -11,6 +11,7 @@ public class Fracture : MonoBehaviour
     public FractureOptions   fractureOptions;
     public RefractureOptions refractureOptions;
     public CallbackOptions   callbackOptions;
+    public ContactPoint      firstHitPoint;
 
     /// <summary>
     /// The number of times this fragment has been re-fractured.
@@ -77,6 +78,7 @@ public class Fracture : MonoBehaviour
                 if (collisionForce > triggerOptions.minimumCollisionForce &&
                     (!triggerOptions.filterCollisionsByTag || tagAllowed))
                 {
+                    firstHitPoint = contact;
                     ComputeFracture();
                 }
             }
@@ -162,6 +164,7 @@ public class Fracture : MonoBehaviour
             }
             else
             {
+                Fragmenter.firstHitPoint = firstHitPoint;
                 Fragmenter.Fracture(gameObject,
                     fractureOptions,
                     fragmentTemplate,

@@ -10,6 +10,8 @@ using UnityEditor;
 
 public static class Fragmenter
 {
+    public static ContactPoint firstHitPoint;
+
     /// <summary>
     /// Generates the mesh fragments based on the provided options. The generated fragment objects are
     /// stored as children of `fragmentParent`
@@ -26,7 +28,8 @@ public static class Fragmenter
                                 GameObject fragmentTemplate,
                                 Transform parent,
                                 bool saveToDisk = false,
-                                string saveFolderPath = "")
+                                string saveFolderPath = ""
+        )
     {
         // Define our source mesh data for the fracturing
         FragmentData sourceMesh = new FragmentData(sourceObject.GetComponent<MeshFilter>().sharedMesh);
@@ -44,22 +47,33 @@ public static class Fragmenter
             meshData.CalculateBounds();
 
             // Select an arbitrary fracture plane normal
+            // todo: choose the normal based on the collision hit point
+
             Vector3 normal = new Vector3(
                 options.xAxis ? Random.Range(-1f, 1f) : 0f,
                 options.yAxis ? Random.Range(-1f, 1f) : 0f,
                 options.zAxis ? Random.Range(-1f, 1f) : 0f);
 
+            var hitPoint = meshData.Bounds.center;
+            // the first slice at the point of first hit
+            if (fragments.Count == 0)
+                hitPoint = firstHitPoint.point;
+
             // Slice and dice!
             MeshSlicer.Slice(meshData,
                 normal,
-                meshData.Bounds.center,
+                // meshData.Bounds.center,
+                hitPoint,
                 options.textureScale,
                 options.textureOffset,
                 out topSlice,
                 out bottomSlice);
 
+
+
             fragments.Enqueue(topSlice);
             fragments.Enqueue(bottomSlice);
+
         }
 
         int i = 0;
