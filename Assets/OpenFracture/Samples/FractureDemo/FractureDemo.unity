@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 584796072}
-  m_IndirectSpecularColor: {r: 0.4419819, g: 0.48380977, b: 0.53238535, a: 1}
+  m_IndirectSpecularColor: {r: 0.4419827, g: 0.48381066, b: 0.5323868, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1537,7 +1537,7 @@ MonoBehaviour:
     zAxis: 1
     detectFloatingFragments: 1
     asynchronous: 0
-    insideMaterial: {fileID: 10651, guid: 0000000000000000f000000000000000, type: 0}
+    insideMaterial: {fileID: 2100000, guid: 829c17a12e18ad14a8ce0c44ff663e21, type: 2}
     textureScale: {x: 1, y: 1}
     textureOffset: {x: 0, y: 0}
   refractureOptions:
