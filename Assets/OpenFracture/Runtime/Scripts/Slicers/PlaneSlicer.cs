@@ -43,13 +43,31 @@ public class PlaneSlicer : MonoBehaviour
             var center = mesh.bounds.center;
             var extents = mesh.bounds.extents;
 
-            extents = new Vector3(extents.x * this.transform.localScale.x,
-                                  extents.y * this.transform.localScale.y,
-                                  extents.z * this.transform.localScale.z);
+            var tf = this.transform;
+            // +-----+-----+
+            // |     |     |
+            // +-----+-----+
+            // |     |     |
+            // +-----+-----+
+            // |- z -|
+            extents = new Vector3(extents.x * tf.localScale.x,
+                                  extents.y * tf.localScale.y,
+                                  extents.z * tf.localScale.z); // to World extents
                                   
             // Cast a ray and find the nearest object
-            RaycastHit[] hits = Physics.BoxCastAll(this.transform.position, extents, this.transform.forward, this.transform.rotation, extents.z);
-            
+            RaycastHit[] hits = Physics.BoxCastAll(tf.position, extents, tf.forward, tf.rotation, extents.z);
+             //         +-----------------+ 
+             //        /                 /|
+             //       /        +        / |
+             //      /                 /  |
+             //     +-----------------+   |
+             //     |                 |   |
+             //     |                 | + | 
+             //     |        +        |   +
+             //     |                 |  /
+             //     |                 | /
+             //     +-----------------+ 
+             //     |-      2z       -|
             foreach(RaycastHit hit in hits)
             {
                 var obj = hit.collider.gameObject;
