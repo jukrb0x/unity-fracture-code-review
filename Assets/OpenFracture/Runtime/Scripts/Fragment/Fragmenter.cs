@@ -58,17 +58,20 @@ public static class Fragmenter
 
             var hitPoint = meshData.Bounds.center;
             // the first slice at the point of first hit
-            if (fragments.Count == 0) // fixme
+            // fixme: not always work
+            //        1. the floating mesh will not be generated
+            if (fragments.Count == 0)
             {
                 hitPoint = firstHitPoint.point;
                 GameObject.Instantiate(pointTest, hitPoint, Quaternion.identity);
+                normal = firstHitPoint.normal;
+                
+#if DEBUG
                 Debug.DrawRay(hitPoint, new Vector3(1, 0, 0), Color.red);
                 Debug.DrawRay(hitPoint, new Vector3(0, 1, 0), Color.green);
                 Debug.DrawRay(hitPoint, new Vector3(0, 0, 1), Color.blue);
-
-                normal = firstHitPoint.normal;
-                Debug.DrawLine(normal.normalized * 10 + hitPoint, hitPoint, Color.yellow);//
-
+                Debug.DrawLine(normal.normalized * 10 + hitPoint, hitPoint, Color.yellow); //
+#endif
             }
 
             // Slice and dice!
