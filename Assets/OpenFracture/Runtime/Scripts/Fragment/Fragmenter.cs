@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
 
 #if UNITY_EDITOR
@@ -11,6 +12,7 @@ using UnityEditor;
 public static class Fragmenter
 {
     public static ContactPoint firstHitPoint;
+    public static GameObject   pointTest;
 
     /// <summary>
     /// Generates the mesh fragments based on the provided options. The generated fragment objects are
@@ -56,8 +58,18 @@ public static class Fragmenter
 
             var hitPoint = meshData.Bounds.center;
             // the first slice at the point of first hit
-            if (fragments.Count == 0)
+            if (fragments.Count == 0) // fixme
+            {
                 hitPoint = firstHitPoint.point;
+                GameObject.Instantiate(pointTest, hitPoint, Quaternion.identity);
+                Debug.DrawRay(hitPoint, new Vector3(1, 0, 0), Color.red);
+                Debug.DrawRay(hitPoint, new Vector3(0, 1, 0), Color.green);
+                Debug.DrawRay(hitPoint, new Vector3(0, 0, 1), Color.blue);
+
+                normal = firstHitPoint.normal;
+                Debug.DrawLine(normal.normalized * 10 + hitPoint, hitPoint, Color.yellow);//
+
+            }
 
             // Slice and dice!
             MeshSlicer.Slice(meshData,

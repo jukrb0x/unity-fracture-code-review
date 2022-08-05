@@ -12,6 +12,7 @@ public class Fracture : MonoBehaviour
     public RefractureOptions refractureOptions;
     public CallbackOptions   callbackOptions;
     public ContactPoint      firstHitPoint;
+    public GameObject        pointTest;
 
     /// <summary>
     /// The number of times this fragment has been re-fractured.
@@ -165,6 +166,7 @@ public class Fracture : MonoBehaviour
             else
             {
                 Fragmenter.firstHitPoint = firstHitPoint;
+                Fragmenter.pointTest = pointTest;
                 Fragmenter.Fracture(gameObject,
                     fractureOptions,
                     fragmentTemplate,
