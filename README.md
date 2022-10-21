@@ -10,4 +10,4 @@ This repository contains multiple fracture technologies implementation in Unity,
 ## Notice and Agreement
 **When you download the code from this repository, you agree to what follows.**
 
-Please be noted that this repository will only be used for learning object destruction/fracture algorithms and their application in Unity, please be aware of the code licenses involved in the project and you are obliged to respect them, if there are some paid plugins, please remove them yourself after downloading. The repository owner will not be responsible for your actions.
+Please be noted that this repository will only be used for learning object/mesh destruction/fracture algorithms and their application in Unity, please be aware of the code licenses involved in the project and you are obliged to respect them, if there are some paid plugins, please remove them yourself after downloading. The repository owner will not be responsible for your actions.
